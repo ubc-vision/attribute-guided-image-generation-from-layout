@@ -60,7 +60,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='~'):
+def prepare_dir(name, path='/scratch/markma/'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -80,7 +80,7 @@ def main(config):
 
     log_save_dir, model_save_dir, sample_save_dir, result_save_dir = prepare_dir(config.exp_name)
 
-    with open("~/vg/vocab.json", 'r') as f:
+    with open("data/vocab.json", 'r') as f:
         vocab = json.load(f)
         att_idx_to_name = np.array(vocab['attribute_idx_to_name'])
         print(att_idx_to_name)
@@ -228,13 +228,13 @@ def main(config):
 
                     img_rec_np = img_rec_y[j].numpy().transpose(1, 2, 0)
                     img_path = os.path.join(result_save_dir,
-                                            'img{:06d}_rec_modified.png'.format(i * config.batch_size + j,,
+                                            'img{:06d}_rec_modified.png'.format(i * config.batch_size + j,
                                             object_idx_to_name[cur_obj_success]))
                     imwrite(img_path, img_rec_np)
 
                     img_rand_np = img_rand_y[j].numpy().transpose(1, 2, 0)
                     img_path = os.path.join(result_save_dir,
-                                            'img{:06d}_rand_modified.png'.format(i * config.batch_size + j,,
+                                            'img{:06d}_rand_modified.png'.format(i * config.batch_size + j,
                                             object_idx_to_name[cur_obj_success]))
                     imwrite(img_path, img_rand_np)
 
@@ -305,7 +305,7 @@ if True:
     # parser.add_argument('--exp_name', type=str, default='exp_e64z64')
 
     config = parser.parse_args()
-    config.exp_name = '128_est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
+    config.exp_name = 'est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
                                                                                                12,
                                                                                                config.embedding_dim,
                                                                                                config.z_dim,

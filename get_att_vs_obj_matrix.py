@@ -10,14 +10,14 @@ import torch
 # print(m.shape)
 
 data = {}
-with h5py.File("~/vg/train.h5", 'r') as f:
+with h5py.File("data/train.h5", 'r') as f:
     for k, v in f.items():
         if k == 'image_paths':
             image_paths = list(v)
         else:
             data[k] = torch.IntTensor(np.asarray(v))
 
-with open("~/vg/vocab.json", 'r') as f:
+with open("~/data/vocab.json", 'r') as f:
     vocab = json.load(f)
 
 num_objects = len(vocab['object_idx_to_name'])

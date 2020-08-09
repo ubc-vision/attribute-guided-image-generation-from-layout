@@ -16,6 +16,7 @@ import json
 from models.bilinear import crop_bbox_batch
 from sklearn.metrics import confusion_matrix
 
+
 def safe_division(n, d):
     return n / d if d else 1  # return 1 when predict nothing
 
@@ -54,12 +55,12 @@ def draw_bbox(image, bbox):
 
     draw.rectangle([c1, c2], outline=(0, 255, 0))
 
-    output = np.array(im)/255
+    output = np.array(im) / 255
 
     return output
 
 
-def prepare_dir(name,  path='~'):
+def prepare_dir(name, path='/scratch/markma/'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -79,27 +80,28 @@ def main(config):
 
     log_save_dir, model_save_dir, sample_save_dir, result_save_dir = prepare_dir(config.exp_name)
 
-    with open("~/vg/vocab.json", 'r') as f:
+    with open("data/vocab.json", 'r') as f:
         vocab = json.load(f)
         att_idx_to_name = np.array(vocab['attribute_idx_to_name'])
         print(att_idx_to_name)
         object_idx_to_name = np.array(vocab['object_idx_to_name'])
 
+    attribute_nums = 106
 
-    attribute_nums =106
-
-    train_data_loader, val_data_loader = get_dataloader_vg(batch_size=config.batch_size, attribute_embedding=attribute_nums)
+    train_data_loader, val_data_loader = get_dataloader_vg(batch_size=config.batch_size,
+                                                           attribute_embedding=attribute_nums)
 
     vocab_num = train_data_loader.dataset.num_objects
 
     netG = Generator(num_embeddings=vocab_num, obj_att_dim=config.embedding_dim, z_dim=config.z_dim,
-                         clstm_layers=config.clstm_layers, obj_size=config.object_size,
-                         attribute_dim=attribute_nums).to(device)
+                     clstm_layers=config.clstm_layers, obj_size=config.object_size,
+                     attribute_dim=attribute_nums).to(device)
 
     netD_att = AttributeDiscriminator(n_attribute=attribute_nums).to(device)
     netD_att = add_sn(netD_att)
 
-    start_iter_ = load_model(netD_att, model_dir="~/models/trained_models", appendix='netD_attribute', iter=config.resume_iter)
+    start_iter_ = load_model(netD_att, model_dir="~/models/trained_models", appendix='netD_attribute',
+                             iter=config.resume_iter)
     _ = load_model(netG, model_dir=model_save_dir, appendix='netG', iter=config.resume_iter)
 
     data_loader = val_data_loader
@@ -167,15 +169,15 @@ def main(config):
 
             # attribute modification
             changed_list = []
-            src = 2     # 94 blue, 95 black
-            tgt = 95     # 8 red, 2 white
+            src = 2  # 94 blue, 95 black
+            tgt = 95  # 8 red, 2 white
             for idx, o in enumerate(objs):
-                    attribute[idx, [2, 8, 0, 94, 90, 95, 96, 34, 25, 70, 58, 104]] = 0 # remove other color
-                    attribute[idx, tgt] = 1
+                attribute[idx, [2, 8, 0, 94, 90, 95, 96, 34, 25, 70, 58, 104]] = 0  # remove other color
+                attribute[idx, tgt] = 1
 
-                    attribute_est[idx, [2, 8, 0, 94, 90, 95, 96, 34, 25, 70, 58, 104]] = 0 # remove other color
-                    attribute_est[idx, tgt] = 1
-                    changed_list.append(idx)
+                attribute_est[idx, [2, 8, 0, 94, 90, 95, 96, 34, 25, 70, 58, 104]] = 0  # remove other color
+                attribute_est[idx, tgt] = 1
+                changed_list.append(idx)
 
             # Generate red image
             z = torch.randn(objs.size(0), config.z_dim).to(device)
@@ -187,7 +189,7 @@ def main(config):
             img_rec_y = imagenet_deprocess_batch(img_rec_y)
             imgs = imagenet_deprocess_batch(imgs)
 
-            #2 top k
+            # 2 top k
             estimated_att = netD_att(crops_rand)
             max_idx = estimated_att.topk(5)[1]
             changed_list = [i for i in changed_list if tgt not in max_idx[i]]
@@ -217,17 +219,22 @@ def main(config):
 
                 # save successfully modified images
                 if len(cur_obj_success) > 0:
-
                     img_shift_y = img_shift_y[j].numpy().transpose(1, 2, 0)
-                    img_path_red = os.path.join(result_save_dir, 'img{:06d}_shift_{}_modified.png'.format(i*config.batch_size+j, object_idx_to_name[cur_obj_success]))
+                    img_path_red = os.path.join(result_save_dir,
+                                                'img{:06d}_shift_{}_modified.png'.format(i * config.batch_size + j,
+                                                                                         object_idx_to_name[
+                                                                                             cur_obj_success]))
                     imwrite(img_path_red, img_shift_y)
 
                     img_rec_np = img_rec_y[j].numpy().transpose(1, 2, 0)
-                    img_path = os.path.join(result_save_dir, 'img{:06d}_rec_modified.png'.format(i * config.batch_size + j, , object_idx_to_name[cur_obj_success]))
+                    img_path = os.path.join(result_save_dir,
+                                            'img{:06d}_rec_modified.png'.format(i * config.batch_size + j,
+                                            object_idx_to_name[cur_obj_success]))
                     imwrite(img_path, img_rec_np)
 
                     img_rand_np = img_rand_y[j].numpy().transpose(1, 2, 0)
-                    img_path = os.path.join(result_save_dir, 'img{:06d}_rand_modified.png'.format(i * config.batch_size + j,,
+                    img_path = os.path.join(result_save_dir,
+                                            'img{:06d}_rand_modified.png'.format(i * config.batch_size + j,
                                             object_idx_to_name[cur_obj_success]))
                     imwrite(img_path, img_rand_np)
 
@@ -257,12 +264,13 @@ def main(config):
         print("% of data at least predicted correct once")
         print((count[:, 3] > 0).sum() / count.shape[0])
 
+
 if True:
     # __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Training configuration
-    path = '/home/mark1123/data/mark1123'
+    path = '~'
     parser.add_argument('--path', type=str, default=path)
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
@@ -287,7 +295,8 @@ if True:
     parser.add_argument('--lambda_kl', type=float, default=0.01, help='real/fake image')
 
     # Log setting
-    parser.add_argument('--resume_iter', type=str, default='l', help='l: from latest; s: from scratch; xxx: from iter xxx')
+    parser.add_argument('--resume_iter', type=str, default='l',
+                        help='l: from latest; s: from scratch; xxx: from iter xxx')
     parser.add_argument('--log_step', type=int, default=10)
     parser.add_argument('--tensorboard_step', type=int, default=100)
     parser.add_argument('--save_step', type=int, default=500)
@@ -296,16 +305,16 @@ if True:
     # parser.add_argument('--exp_name', type=str, default='exp_e64z64')
 
     config = parser.parse_args()
-    config.exp_name = '128_est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
-                                                                                          12,
-                                                                                          config.embedding_dim,
-                                                                                          config.z_dim,
-                                                                                          config.clstm_layers,
-                                                                                          config.lambda_img_adv,
-                                                                                          config.lambda_obj_adv,
-                                                                                          config.lambda_obj_cls,
-                                                                                          config.lambda_z_rec,
-                                                                                          config.lambda_img_rec,
-                                                                                          config.lambda_kl)
+    config.exp_name = 'est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
+                                                                                               12,
+                                                                                               config.embedding_dim,
+                                                                                               config.z_dim,
+                                                                                               config.clstm_layers,
+                                                                                               config.lambda_img_adv,
+                                                                                               config.lambda_obj_adv,
+                                                                                               config.lambda_obj_cls,
+                                                                                               config.lambda_z_rec,
+                                                                                               config.lambda_img_rec,
+                                                                                               config.lambda_kl)
     print(config)
     main(config)

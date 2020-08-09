@@ -27,7 +27,7 @@ print("Torchvision Version: ", torchvision.__version__)
 #   to the ImageFolder structure
 
 data_dir = '~/pickle/128_vg_pkl_resinet50/'
-vg_dir = "~/vg"
+vg_dir = "data"
 
 # Models to choose from [resnet, alexnet, vgg, squeezenet, densenet, inception]
 model_name = "resnet"

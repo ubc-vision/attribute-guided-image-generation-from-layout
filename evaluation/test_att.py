@@ -24,7 +24,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-VG_DIR = os.path.expanduser('~/vg')
+VG_DIR = os.path.expanduser('data')
 parser = argparse.ArgumentParser()
 # parser.add_argument('--checkpoint', default='sg2im-models/vg128.pt')
 parser.add_argument('--checkpoint', default='checkpoint_with_model.pt')

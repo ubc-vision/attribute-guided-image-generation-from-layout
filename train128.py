@@ -4,7 +4,7 @@ import argparse
 from models.generator_obj_att128 import Generator
 from models.discriminator import ImageDiscriminator
 from models.discriminator import ObjectDiscriminator
-from models.discriminator import AttributeDiscriminator
+from models.discriminator import AttributeDiscriminator128 as AttributeDiscriminator
 from models.discriminator import add_sn
 from data.vg_custom_mask import get_dataloader as get_dataloader_vg
 from utils.model_saver_iter import load_model, save_model
@@ -66,7 +66,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='~'):
+def prepare_dir(name, path='/scratch/markma/'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -82,7 +82,7 @@ def prepare_dir(name, path='~'):
 def main(config):
     matrix = torch.load("matrix_obj_vs_att.pt")
     cudnn.benchmark = True
-    device = torch.device('cuda:1')
+    device = torch.device('cuda:3')
 
     log_save_dir, model_save_dir, sample_save_dir, result_save_dir = prepare_dir(config.exp_name)
 
@@ -92,7 +92,11 @@ def main(config):
 
     vocab_num = data_loader.dataset.num_objects
 
-    netG = Generator(num_embeddings=vocab_num, obj_att_dim=config.embedding_dim, z_dim=config.z_dim,
+    if config.clstm_layers == 0:
+        netG = Generator_nolstm(num_embeddings=vocab_num, embedding_dim=config.embedding_dim, z_dim=config.z_dim).to(
+            device)
+    else:
+        netG = Generator(num_embeddings=vocab_num, obj_att_dim=config.embedding_dim, z_dim=config.z_dim,
                          clstm_layers=config.clstm_layers, obj_size=config.object_size,
                          attribute_dim=attribute_nums).to(device)
 
@@ -420,12 +424,11 @@ if __name__ == '__main__':
     parser.add_argument('--path', type=str, default=path)
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
-    parser.add_argument('--coco_dir', type=str, default=path + '/coco')
-    parser.add_argument('--batch_size', type=int, default=12)
+    parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--niter', type=int, default=900000, help='number of training iteration')
 
-    parser.add_argument('--image_size', type=int, default=128, help='image size')
-    parser.add_argument('--object_size', type=int, default=64, help='image size')
+    parser.add_argument('--image_size', type=int, default=64, help='image size')
+    parser.add_argument('--object_size', type=int, default=32, help='image size')
     parser.add_argument('--embedding_dim', type=int, default=64)
     parser.add_argument('--z_dim', type=int, default=64)
     parser.add_argument('--learning_rate', type=float, default=2e-4)
@@ -451,7 +454,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_tensorboard', type=str2bool, default='true')
 
     config = parser.parse_args()
-    config.exp_name = 'est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
+    config.exp_name = '128_est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
                                                                                               config.batch_size,
                                                                                               config.embedding_dim,
                                                                                               config.z_dim,

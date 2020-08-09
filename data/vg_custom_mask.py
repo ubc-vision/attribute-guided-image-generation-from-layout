@@ -159,6 +159,7 @@ class VgSceneGraphDataset(Dataset):
 
             # obj_idx_mapping[obj_idx] = i
             num_att = 0
+
             while attributes[i][num_att] != -1:
                 num_att += 1
             # print(attributes[i, :], num_att)
@@ -220,7 +221,7 @@ def vg_collate_fn(batch):
     return out
 
 
-def get_dataloader(batch_size=10, VG_DIR='~/vg', VG_IMG_DIR="~/vg", attribute_embedding=128):
+def get_dataloader(batch_size=10, VG_DIR='/scratch/markma/Datasets/vg', VG_IMG_DIR="/scratch/zhaobo/Datasets/vg", attribute_embedding=128):
     vocab_json = os.path.join(VG_DIR, 'vocab.json')
     train_h5 = os.path.join(VG_DIR, 'train.h5')
     val_h5 = os.path.join(VG_DIR, 'test.h5')

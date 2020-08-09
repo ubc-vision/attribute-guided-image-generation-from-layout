@@ -29,7 +29,7 @@ print("Torchvision Version: ", torchvision.__version__)
 #   to the ImageFolder structure
 
 
-vg_dir = "~/vg"
+vg_dir = "data"
 
 # Models to choose from [resnet, alexnet, vgg, squeezenet, densenet, inception]
 model_name = "resnet"

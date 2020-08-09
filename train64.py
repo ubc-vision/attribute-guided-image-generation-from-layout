@@ -2,12 +2,10 @@ import torch
 from pathlib import Path
 import argparse
 from models.generator_obj_att import Generator
-from models.generator_noclstm import Generator as Generator_nolstm
 from models.discriminator import ImageDiscriminator
 from models.discriminator import ObjectDiscriminator
 from models.discriminator import AttributeDiscriminator
 from models.discriminator import add_sn
-from data.coco_custom_mask import get_dataloader as get_dataloader_coco
 from data.vg_custom_mask import get_dataloader as get_dataloader_vg
 from utils.model_saver_iter import load_model, save_model
 import torch.backends.cudnn as cudnn
@@ -426,7 +424,6 @@ if __name__ == '__main__':
     parser.add_argument('--path', type=str, default=path)
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
-    parser.add_argument('--coco_dir', type=str, default=path + '/coco')
     parser.add_argument('--batch_size', type=int, default=12)
     parser.add_argument('--niter', type=int, default=900000, help='number of training iteration')
 

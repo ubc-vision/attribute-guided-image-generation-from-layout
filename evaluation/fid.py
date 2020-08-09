@@ -375,7 +375,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    files_true = '~/vg/images/VG_100K'
+    files_true = 'data/images/VG_100K'
 
     # files_true = '/scratch/zhaobo/Datasets/coco/images/train2017'
     files_gen = '~/checkpoints/all/results/sampled_att64_est_change_att_vg_bs12e64z64clstm3li1.0lo1.0lc1.0lz8.0lc1.0lk0.01/2'
