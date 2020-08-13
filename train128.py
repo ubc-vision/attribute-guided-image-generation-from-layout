@@ -425,7 +425,7 @@ if __name__ == '__main__':
     parser.add_argument('--path', type=str, default=path)
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
-    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--niter', type=int, default=900000, help='number of training iteration')
 
     parser.add_argument('--image_size', type=int, default=128, help='image size')
