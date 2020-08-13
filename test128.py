@@ -275,7 +275,7 @@ if True:
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
     parser.add_argument('--coco_dir', type=str, default=path + '/coco')
-    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=8)
 
     parser.add_argument('--niter', type=int, default=5000000, help='number of training iteration')
     parser.add_argument('--image_size', type=int, default=128, help='image size')
