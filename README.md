@@ -35,14 +35,14 @@ To train 64x64 (or 128x128) from scratch, run
 ```bash
 python train64.py
 ```
-The script will check if pretrained models exsit.
+The script will check if pretrained models exist.
 
-Training 128x128 model is computationally expensive. You might consider using `torch.DataParallel`.
+Training 128x128 model is computationally expensive. You might consider using `torch.DataParallel` for training with a larger batch size.
 
 ### Test
 To test 64x64 (or 128x128) model, run 
 ```bash
 python test64.py
 ```
-Note that you can modify attributes as you wish in the test64.py (test128.py) script
+You can modify attributes as you wish in the test64.py (test128.py) script.
 
