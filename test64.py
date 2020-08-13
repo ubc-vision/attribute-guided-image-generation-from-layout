@@ -60,7 +60,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='/scratch/markma/'):
+def prepare_dir(name, path='~/'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -275,11 +275,11 @@ if True:
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
     parser.add_argument('--coco_dir', type=str, default=path + '/coco')
-    parser.add_argument('--batch_size', type=int, default=24)
+    parser.add_argument('--batch_size', type=int, default=8)
 
     parser.add_argument('--niter', type=int, default=5000000, help='number of training iteration')
     parser.add_argument('--image_size', type=int, default=64, help='image size')
-    parser.add_argument('--object_size', type=int, default=64, help='image size')
+    parser.add_argument('--object_size', type=int, default=32, help='image size')
     parser.add_argument('--embedding_dim', type=int, default=64)
     parser.add_argument('--z_dim', type=int, default=64)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
@@ -306,7 +306,7 @@ if True:
 
     config = parser.parse_args()
     config.exp_name = 'est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
-                                                                                               12,
+                                                                                               config.batch_size,
                                                                                                config.embedding_dim,
                                                                                                config.z_dim,
                                                                                                config.clstm_layers,

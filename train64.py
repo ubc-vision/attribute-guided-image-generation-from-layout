@@ -66,7 +66,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='/scratch/markma/'):
+def prepare_dir(name, path='~/'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -88,7 +88,7 @@ def main(config):
 
     attribute_nums = 106
 
-    data_loader, _ = get_dataloader_vg(batch_size=config.batch_size, attribute_embedding=attribute_nums)
+    data_loader, _ = get_dataloader_vg(batch_size=config.batch_size, attribute_embedding=attribute_nums, image_size = config.image_size)
 
     vocab_num = data_loader.dataset.num_objects
 

@@ -60,7 +60,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='/scratch/markma/'):
+def prepare_dir(name, path='~'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -76,7 +76,7 @@ def prepare_dir(name, path='/scratch/markma/'):
 def main(config):
     cudnn.benchmark = True
 
-    device = torch.device('cuda:1')
+    device = torch.device('cuda:3')
 
     log_save_dir, model_save_dir, sample_save_dir, result_save_dir = prepare_dir(config.exp_name)
 
@@ -275,10 +275,10 @@ if True:
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
     parser.add_argument('--coco_dir', type=str, default=path + '/coco')
-    parser.add_argument('--batch_size', type=int, default=24)
+    parser.add_argument('--batch_size', type=int, default=2)
 
     parser.add_argument('--niter', type=int, default=5000000, help='number of training iteration')
-    parser.add_argument('--image_size', type=int, default=64, help='image size')
+    parser.add_argument('--image_size', type=int, default=128, help='image size')
     parser.add_argument('--object_size', type=int, default=64, help='image size')
     parser.add_argument('--embedding_dim', type=int, default=64)
     parser.add_argument('--z_dim', type=int, default=64)
@@ -305,8 +305,8 @@ if True:
     # parser.add_argument('--exp_name', type=str, default='exp_e64z64')
 
     config = parser.parse_args()
-    config.exp_name = 'est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
-                                                                                               12,
+    config.exp_name = '128_est_change_att_{}_bs{}e{}z{}clstm{}li{}lo{}lc{}lz{}lc{}lk{}'.format(config.dataset,
+                                                                                               config.batch_size,
                                                                                                config.embedding_dim,
                                                                                                config.z_dim,
                                                                                                config.clstm_layers,

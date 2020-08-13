@@ -1,4 +1,5 @@
 import torch
+print(torch.__version__)
 from pathlib import Path
 import argparse
 from models.generator_obj_att128 import Generator
@@ -66,7 +67,7 @@ def draw_bbox(image, bbox):
     return output
 
 
-def prepare_dir(name, path='/scratch/markma/'):
+def prepare_dir(name, path='~'):
     log_save_dir = '{}/checkpoints/all/logs/{}'.format(path, name)
     model_save_dir = '{}/checkpoints/all/models/{}'.format(path, name)
     sample_save_dir = '{}/checkpoints/all/samples/{}'.format(path, name)
@@ -88,7 +89,7 @@ def main(config):
 
     attribute_nums = 106
 
-    data_loader, _ = get_dataloader_vg(batch_size=config.batch_size, attribute_embedding=attribute_nums)
+    data_loader, _ = get_dataloader_vg(batch_size=config.batch_size, attribute_embedding=attribute_nums, image_size = config.image_size)
 
     vocab_num = data_loader.dataset.num_objects
 
@@ -424,7 +425,7 @@ if __name__ == '__main__':
     parser.add_argument('--path', type=str, default=path)
     parser.add_argument('--dataset', type=str, default='vg')
     parser.add_argument('--vg_dir', type=str, default=path + '/vg')
-    parser.add_argument('--batch_size', type=int, default=4)
+    parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--niter', type=int, default=900000, help='number of training iteration')
 
     parser.add_argument('--image_size', type=int, default=128, help='image size')
