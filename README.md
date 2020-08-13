@@ -1,7 +1,7 @@
 # attribute-guided-image-generation-from-layout
 This is the code repository complementing the paper "attribute-guided image generation from layout". The pretrained model can be downloaded here: (TODO)
 
-![Model Pipeline](demo/pipeline.pdf)
+![Model Pipeline](demo/pipeline.png)
 
 ## Dependencies and Setup
 - Python 3.6.8
