@@ -26,7 +26,9 @@ chmod +x download_vg.sh
 ```
 Preprocessing: 
 ```bash
-cd data
+cd data/Dataset/vg
+python train_test_split.py # split the dataset
+cd ../..
 python preprocess_vg.py
 ```
 
